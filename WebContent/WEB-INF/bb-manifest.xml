@@ -2,8 +2,8 @@
 <manifest>
 	<!-- core extension information -->
 	<plugin>
-		<name value= "A Block Dr. Thornton Is Working On"/>
-		<handle value= "workingblock"/>
+		<name value= "GamerCard Block"/>
+		<handle value= "gamercardblock"/>
 		<description value= " Here is a description."/>
 		<version value= "1.0.1"/>
 		<requires>
@@ -20,12 +20,12 @@
   
 		<!-- Modules, types, and channels for the community -->
 		<module-defs>		
-			<module-type ext-ref="workingblock" title="A Block Dr. Thornton Is Working On" uicreatable="true">
+			<module-type ext-ref="gamercardblock" title="GamerCard Block" uicreatable="true">
 				<jsp>		
-				  <view>leaderboard.jsp</view>		
+				  <view>gamercard.jsp</view>		
 				</jsp>		
 			</module-type>		
-			<module type="workingblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="A Block Dr. Thornton Is Working On">		
+			<module type="gamercardblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="GamerCard Block">		
 				<description>Description here.</description>		
 				<ExtraInfo />		
 				<module-groups>		
