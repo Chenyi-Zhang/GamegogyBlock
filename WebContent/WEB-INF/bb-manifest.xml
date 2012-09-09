@@ -2,8 +2,8 @@
 <manifest>
 	<!-- core extension information -->
 	<plugin>
-		<name value= "GamerCard Block"/>
-		<handle value= "gamercardblock"/>
+		<name value= "Achievements Block"/>
+		<handle value= "achievementsblock"/>
 		<description value= " Here is a description."/>
 		<version value= "1.0.1"/>
 		<requires>
@@ -20,12 +20,12 @@
   
 		<!-- Modules, types, and channels for the community -->
 		<module-defs>		
-			<module-type ext-ref="gamercardblock" title="GamerCard Block" uicreatable="true">
+			<module-type ext-ref="achievementsblock" title="Achievements Block" uicreatable="true">
 				<jsp>		
-				  <view>gamercard.jsp</view>		
+				  <view>achievements.jsp</view>		
 				</jsp>		
 			</module-type>		
-			<module type="gamercardblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="GamerCard Block">		
+			<module type="achievementsblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="Achievements Block">		
 				<description>Description here.</description>		
 				<ExtraInfo />		
 				<module-groups>		
