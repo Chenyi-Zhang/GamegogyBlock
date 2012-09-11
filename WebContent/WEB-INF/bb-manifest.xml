@@ -2,7 +2,7 @@
 <manifest>
 	<!-- core extension information -->
 	<plugin>
-		<name value= "GamerCard Block"/>
+		<name value= "test GamerCard Block"/>
 		<handle value= "gamercardblock"/>
 		<description value= " Here is a description."/>
 		<version value= "1.0.1"/>
