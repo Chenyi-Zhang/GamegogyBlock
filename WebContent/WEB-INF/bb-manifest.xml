@@ -2,7 +2,7 @@
 <manifest>
 	<!-- core extension information -->
 	<plugin>
-		<name value= "Achievements Block"/>
+		<name value= "Gamegogy Achievements Block"/>
 		<handle value= "achievementsblock"/>
 		<description value= " Here is a description."/>
 		<version value= "1.0.1"/>
@@ -20,12 +20,12 @@
   
 		<!-- Modules, types, and channels for the community -->
 		<module-defs>		
-			<module-type ext-ref="achievementsblock" title="Achievements Block" uicreatable="true">
+			<module-type ext-ref="achievementsblock" title="Gamegogy Achievements Block" uicreatable="true">
 				<jsp>		
 				  <view>achievements.jsp</view>		
 				</jsp>		
 			</module-type>		
-			<module type="achievementsblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="Achievements Block">		
+			<module type="achievementsblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="Gamegogy Achievements Block">		
 				<description>Description here.</description>		
 				<ExtraInfo />		
 				<module-groups>		
