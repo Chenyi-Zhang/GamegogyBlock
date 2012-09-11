@@ -2,8 +2,8 @@
 <manifest>
 	<!-- core extension information -->
 	<plugin>
-		<name value= "A Block Dr. Thornton Is Working On"/>
-		<handle value= "workingblock"/>
+		<name value= "Gamegogy Questpath Block"/>
+		<handle value= "questpathblock"/>
 		<description value= " Here is a description."/>
 		<version value= "1.0.1"/>
 		<requires>
@@ -20,12 +20,12 @@
   
 		<!-- Modules, types, and channels for the community -->
 		<module-defs>		
-			<module-type ext-ref="workingblock" title="A Block Dr. Thornton Is Working On" uicreatable="true">
+			<module-type ext-ref="questpathblock" title="Gamegogy Questpath Block" uicreatable="true">
 				<jsp>		
-				  <view>leaderboard.jsp</view>		
+				  <view>questpath.jsp</view>		
 				</jsp>		
 			</module-type>		
-			<module type="workingblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="A Block Dr. Thornton Is Working On">		
+			<module type="questpathblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="Gamegogy Questpath Block">		
 				<description>Description here.</description>		
 				<ExtraInfo />		
 				<module-groups>		
