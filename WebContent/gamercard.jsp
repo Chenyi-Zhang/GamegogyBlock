@@ -102,7 +102,7 @@
 	Collections.sort(students);
 	Collections.reverse(students);
 
-	String jsPath = PlugInUtil.getUri("dt", "gamegogyleaderboard1.0", "js/highcharts.js");
+	String jsPath = PlugInUtil.getUri("dt", "gamercardblock", "js/highcharts.js");
 %>
 
 <!DOCTYPE HTML>
@@ -118,7 +118,7 @@
 			jQueryAlias = $.noConflict();  //to avoid this webapp conflicting with others on the page
 		                                                   
 			jQueryAlias(document).ready(function() {			
-				var gamegogyLeaderboardChart;			
+				var gamegogyGamercardChart;			
 				
 				var seriesValues = [
    				<%	
@@ -156,9 +156,9 @@
   				%>
 		
 				
-				gamegogyLeaderboardChart = new Highcharts.Chart({
+				gamegogyGamercardChart = new Highcharts.Chart({
 					chart: {
-						renderTo: 'workingblockChartContainer',
+						renderTo: 'gamercardBlockChartContainer',
 						type: 'bar'
 					},
 					legend: {  enabled: false  },  
@@ -210,7 +210,7 @@
 		
 	</head>
 	<body>
-		<div id="workingblockChartContainer"></div>			
+		<div id="gamercardBlockChartContainer"></div>			
 	</body>
 </html>
 </bbData:context>
