@@ -29,7 +29,7 @@
 <bbData:context id="ctx">  <!-- to allow access to the session variables -->
 <%
 
-	//create a student class to hold their grades and other information
+	//create a student class to hold their grades and other info
 	final class Student implements Comparable<Student> {
 	    public Double score;
 	    public String firstName;
