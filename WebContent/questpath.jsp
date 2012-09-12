@@ -27,7 +27,6 @@
 <%@page import="blackboard.platform.plugin.PlugInUtil"%>	<!-- for utilities -->
 <%@ taglib uri="/bbData" prefix="bbData"%> 					<!-- for tags -->
 <bbData:context id="ctx">  <!-- to allow access to the session variables -->
-
 <%
 
 	//create a student class to hold their grades and other information
