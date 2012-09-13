@@ -8,9 +8,9 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/David/Desktop/bb-cms-admin.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/David/Desktop/bb-platform.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/David/Desktop/bb-taglibs.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/David/Desktop/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/bb-cms-admin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/bb-platform.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/bb-taglibs.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/servlet-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
