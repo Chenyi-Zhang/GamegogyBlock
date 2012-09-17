@@ -1,4 +1,5 @@
-<!-- 
+<!--
+	xinwen is here 
 	Gamegogy Leaderboard 1.0
     Copyright (C) 2012  David Thornton
 
