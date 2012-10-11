@@ -16,11 +16,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<%@page import="blackboard.data.gradebook.impl.Grade"%>
+<%@page import="blackboard.data.content.avlrule.GradeRangeCriteria"%>
+<%@page import="blackboard.persist.gradebook.impl.OutcomeDefinitionDbLoader"%>
+<%@page import="blackboard.data.gradebook.impl.OutcomeDefinition"%>
+<%@page import="blackboard.data.gradebook.impl.Outcome"%>
+<%@page import="blackboard.persist.gradebook.impl.OutcomeDbLoader"%>
+<%@page import="blackboard.data.content.avlrule.GradeCompletedCriteria"%>
+<%@page import="blackboard.data.content.avlrule.AvailabilityCriteria"%>
+<%@page import="blackboard.data.content.avlrule.AvailabilityRule"%>
+<%@page import="blackboard.persist.content.avlrule.AvailabilityRuleDbLoader"%>
+<%@page import="blackboard.persist.content.avlrule.ACLUserPredicateDbLoader"%>
+<%@page import="blackboard.data.content.AggregateReviewStatus"%>
+<%@page import="blackboard.data.gradebook.Score"%>
+<%@page import="blackboard.data.gradebook.Lineitem"%>
+<%@page import="blackboard.persist.gradebook.LineitemDbLoader"%>
+<%@page import="blackboard.platform.BbServiceManager"%>
+<%@page import="blackboard.data.navigation.CourseToc"%>
+<%@page import="blackboard.persist.content.impl.ContentDbLoaderImpl"%>
+<%@page import="blackboard.persist.navigation.CourseTocDbLoader"%>
+<%@page import="blackboard.platform.coursemap.CourseMapManagerFactory"%>
+<%@page import="blackboard.platform.coursemap.impl.CourseMapManagerImpl"%>
+<%@page import="blackboard.platform.coursemap.CourseMapManager"%>
+<%@page import="blackboard.platform.coursecontent.CourseContentManagerFactory"%>
+<%@page import="blackboard.platform.coursecontent.CourseContentManager"%>
+<%@page import="blackboard.persist.content.avlrule.AvailabilityCriteriaDbLoader"%>
+<%@page import="blackboard.platform.coursecontent.impl.CourseContentManagerImpl"%>
+<%@page import="blackboard.platform.content.ContentUserManagerImpl"%>
+<%@page import="blackboard.data.content.Content"%>
+<%@page import="blackboard.data.content.ContentManager"%>
 <%@page import="blackboard.base.*"%>
 <%@page import="blackboard.data.course.*"%> 				<!-- for reading data -->
 <%@page import="blackboard.data.user.*"%> 					<!-- for reading data -->
 <%@page import="blackboard.persist.*"%> 					<!-- for writing data -->
 <%@page import="blackboard.persist.course.*"%> 				<!-- for writing data -->
+<%@page import="blackboard.persist.content.*"%> 				<!-- for writing data -->
+<%@page import="blackboard.data.coursemap.impl.*"%> 				<!-- for writing data -->
 <%@page import="blackboard.platform.gradebook2.*"%>
 <%@page import="blackboard.platform.gradebook2.impl.*"%>
 <%@page import="java.util.*"%> 								<!-- for utilities -->
@@ -29,28 +60,6 @@
 <bbData:context id="ctx">  <!-- to allow access to the session variables -->
 <%
 
-	//create a student class to hold their grades and other information
-	final class Student implements Comparable<Student> {
-	    public Double score;
-	    public String firstName;
-	    public String lastName;
-	    
-	    public Student(String firstName, String lastName, Double score) {
-	        this.score = score;
-	        this.firstName = firstName;
-	        this.lastName = lastName;
-	    }
-	    
-	    public int compareTo(Student s) {
-	    	if (this.score > s.score) {
-	    		return 1;
-	    	}
-	    	else if (this.score < s.score) {
-	    		return -1;
-	    	}
-	    	else { return 0; }	    	
-	    }
-	} //end of class Student
 	
 	// get the current user
 	User sessionUser = ctx.getUser();
@@ -61,14 +70,41 @@
 	// use the GradebookManager to get the gradebook data
 	GradebookManager gm = GradebookManagerFactory.getInstanceWithoutSecurityCheck();
 	BookData bookData = gm.getBookData(new BookDataRequest(courseID));
-	List<GradableItem> lgm = gm.getGradebookItems(courseID);
+		List<GradableItem> lgm = gm.getGradebookItems(courseID);
+	CourseManager cm1 = CourseManagerFactory.getInstance();
+	Course course = cm1.getCourse(courseID);
+	
+// 	//QUESTPATH WORK	
+// 	String contentString = "";
+// 	CourseContentManager ccmI = CourseContentManagerFactory.getInstance();
+// 	CourseMapData cmD = new CourseMapData(course);
+// 	ContentDbLoader cdbLoader= ContentDbLoader.Default.getInstance();
+// 	List<Content> contents = cdbLoader.loadByCourseIdAndTitle(courseID, "Content");
+	
+	
+// // 	Collection<Content> contentList =  cmD.getContentMap().values();
+// // 	Iterator<Content> xyz = contentList.iterator();
+// // 	while (xyz.hasNext()) {
+// // 				Content c = (Content) xyz.next();
+// // 				contentString += c.getTitle() + " ";
+// // 	}
+
+// 	for (Content content : contents) {
+// 		contentString = contentString + " " + content.getTitle();
+// 	}
+
+// 	//QUESTPATH WORK
+	
+// 	String _categories =  "";
+// 	for (GradableItem gi : lgm) {
+// 		_categories = _categories + gi.getCategory();
+// 	}
 	// it is necessary to execute these two methods to obtain calculated students and extended grade data
 	bookData.addParentReferences();
 	bookData.runCumulativeGrading();
 	// get a list of all the students in the class
 	List <CourseMembership> cmlist = CourseMembershipDbLoader.Default.getInstance().loadByCourseIdAndRole(courseID, CourseMembership.Role.STUDENT, null, true);
 	Iterator<CourseMembership> i = cmlist.iterator();
-	List<Student> students = new ArrayList<Student>();
 	
 	// instructors will see student names
 	boolean isUserAnInstructor = false;
@@ -94,15 +130,15 @@
 				if (sessionUserID.equals(currentUserID)) {
 					scoreToHighlight = currScore;
 				}
-				students.add(new Student(cm.getUser().getGivenName(), cm.getUser().getFamilyName(), currScore));
 			}		
 		}
 		index = index + 1;
 	}
-	Collections.sort(students);
-	Collections.reverse(students);
-
+		
 	String jsPath = PlugInUtil.getUri("dt", "questpathblock", "js/highcharts.js");
+	
+	
+
 %>
 
 <!DOCTYPE HTML>
@@ -113,104 +149,175 @@
 		
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 		<script type="text/javascript" src=<%=jsPath%>></script>
-		
-		<script type="text/javascript">		
-			jQueryAlias = $.noConflict();  //to avoid this webapp conflicting with others on the page
-		                                                   
-			jQueryAlias(document).ready(function() {			
-				var gamegogyLeaderboardChart;			
-				
-				var seriesValues = [
-   				<%	
-   					boolean alreadyHighlighted = false;
-   					for (int x = 0; x < students.size(); x++){
-   						Double score = (Double) students.get(x).score;
-   						if (score == scoreToHighlight && !alreadyHighlighted) {
-   							alreadyHighlighted = true;
-   							out.print("{ y: " + score.toString() + ", color: '#008844'}");
-   						}
-   						else {
-   							out.print(score.toString());
-   						}
-   						if (x < students.size() -1) { out.print(","); }
-   						else { out.print("];"); }
-   					}
-   				%>
-   				
-   				var studentNames = [
-  				<%	
-  					if (isUserAnInstructor) {
-  						for (int x = 0; x < students.size(); x++){
-	  						String firstName = (String) students.get(x).firstName;
-	  						String lastName = (String) students.get(x).lastName;
-	  						out.print('"' + firstName.substring(0, 1) + ' ' + lastName + '"');   						
-	  						if (x < students.size() -1) { out.print(","); }
-	  						else { out.print("];"); }
-	  					}
-  					}
-  				
-  					else {
-  						// this is a kludge
-  						out.print("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50];");
-  					}
-  				%>
-		
-				
-				gamegogyLeaderboardChart = new Highcharts.Chart({
-					chart: {
-						renderTo: 'questpathBlockChartContainer',
-						type: 'bar'
-					},
-					legend: {  enabled: false  },  
-					title: {
-						text: 'Leaderboard'
-					},					
-					xAxis: {						
-						categories: studentNames,
-						title: {
-							text: "Player"
-						}
-					},
-					yAxis: {
-						title: {
-							text: 'XP'
-						},
-						gridLineWidth: 0
-					},
-					tooltip: {
-						formatter: function() {
-							var level = 1;
-							// literals here!
-							if (this.y < 100) { level = 1; }
-							else if (this.y < 300) { level = 2; }
-							else if (this.y < 600) { level = 3; }
-							else if (this.y < 1000) { level = 4; }
-							else { level = 5; }
-							return "level: " + level;
-						}
-					},
-					plotOptions: {
-						bar: {
-							dataLabels: {
-								enabled: true
-							}
-						}
-					},					
-					credits: {
-						enabled: false
-					},
-					series: [{
-						name: 'XP',
-						data: seriesValues
-					}]
-				}); //end of chart
-	
-			});  //end of function	
-		</script>      
-		
 	</head>
 	<body>
-		<div id="questpathBlockChartContainer"></div>			
-	</body>
+		<div id="questpathBlockChartContainer">
+			<%= course.getTitle() %>
+			<%
+			//****BELOW IS CODE THAT HAS BEEN COMPLETED TO SHOW the following
+			//    How to gather list of Content for a course
+			//    How to get a list of items that compose the gradebook
+			//    How to get a students grade(s) associated to the gradebook items
+			//    How to get if rules are associated with assignments
+   
+			
+					
+ 			CourseTocDbLoader courseTocLoader = (CourseTocDbLoader)BbServiceManager.getPersistenceService().getDbPersistenceManager().getLoader(CourseTocDbLoader.TYPE);
+ 			ContentDbLoader contentDbLoader = (ContentDbLoader)BbServiceManager.getPersistenceService().getDbPersistenceManager().getLoader(ContentDbLoader.TYPE);
+
+ 			//Gather the classes TABLE OF CONTENTS		
+ 			ArrayList tocList = courseTocLoader.loadByCourseId(courseID);
+ 			Iterator tocIterator = tocList.iterator();
+ 			out.println("Content TOC <br />");
+ 			while(tocIterator.hasNext())
+ 			{
+ 				CourseToc cToc = (CourseToc)tocIterator.next();
+ 				if(cToc.getTargetType()==CourseToc.Target.CONTENT)
+ 				{
+ 					//Load the content of the course
+ 					List children = contentDbLoader.loadChildren(cToc.getContentId(), false, null);
+ 					//BELOW IS FOR DEBUG Purposes to print the content title and data type
+ 					for(int j=0; j < children.size(); j++)
+ 					{
+ 						Content c = (Content)children.get(j);
+ 						out.println(c.getTitle() + " " + c.getDataType().getName() +  " " + c.getId() + "<br />");
+ 					}
+ 				}
+ 			}
+
+			
+			try {
+			LineitemDbLoader lineItemDbLoader = LineitemDbLoader.Default.getInstance();
+			
+			//Load lineItems that compose the gradebook
+			BbList<Lineitem> lineItems = lineItemDbLoader.loadByCourseId(courseID);
+			out.println("<br/ > Scores <br />");
+			out.println(ctx.getCourseMembership().getId() + " - User Id <br />");
+				for (Lineitem li : lineItems) {
+					out.println("Line Item - " + li.getName() + "=" + li.getType() + " " + li.getIsAvailable() + "<br />");
+					if (li.getType().equals("Assignment") || li.getType().equals("Test")) {
+					BbList<Score> scores = li.getScores();
+			//For each score received for the line item print out a students results if that is the student currently logged in					
+					for (Score score : scores) {
+						if(score.getCourseMembershipId().equals(ctx.getCourseMembership().getId())) {
+						out.println(li.getName() + " " + li.getPointsPossible()  + " " + score.getOutcome().getScore() + "<br />");
+						}
+					}
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				out.println("Error getting LineItems <br />");
+			}
+			
+			try{
+				AvailabilityRuleDbLoader avRuleLoader = AvailabilityRuleDbLoader.Default.getInstance();
+				AvailabilityCriteriaDbLoader avCriLoader = AvailabilityCriteriaDbLoader.Default.getInstance();
+				OutcomeDefinitionDbLoader defLoad = OutcomeDefinitionDbLoader.Default.getInstance();
+				
+				//Load ADAPTIVE RELEASE rules
+				List<AvailabilityRule> rules = avRuleLoader.loadByCourseId(courseID);
+				out.println("<br />Rules " + rules.size() + " <br/>");
+				for(AvailabilityRule rule : rules) {
+					//for each ADAPTIVE RELEASE rule, see the criteria
+					List<AvailabilityCriteria> criterias = avCriLoader.loadByRuleId(rule.getId());
+					out.println("<br />Criteria " + criterias.size() + " " + rule.getTitle() + " " + rule.getContentId() + " <br/>");
+						for (AvailabilityCriteria criteria : criterias) {
+							out.println(criteria.getRuleType().toString() + "<br />");
+							//for each GRADE related criteria see which assignment the grade criteria is dependent upone
+							if(criteria.getRuleType().equals(AvailabilityCriteria.RuleType.GRADE_RANGE)) {
+								GradeRangeCriteria gcc = (GradeRangeCriteria) criteria;
+								out.println(gcc.getRuleTypeLabel());
+								out.println("GCC - " + gcc.getMinScore() + "<br />");
+ 								OutcomeDefinition definition = defLoad.loadById(gcc.getOutcomeDefinitionId());
+ 								out.println(" Outcome - " + definition.getTitle() + definition.getDisplayTitle() + " " + definition.getDescription() +"<br /");
+							
+							}
+							if(criteria.getRuleType().equals(AvailabilityCriteria.RuleType.GRADE_RANGE_PERCENT)) {
+								GradeRangeCriteria gcc = (GradeRangeCriteria) criteria;
+								out.println(gcc.getRuleTypeLabel());
+								out.println("GCC - " + gcc.getMinScore() + "<br />");
+								OutcomeDefinition definition = defLoad.loadById(gcc.getOutcomeDefinitionId());
+ 								out.println(" Outcome - " + definition.getTitle() + "<br /");
+							
+							}
+					}
+				}
+				//This was done just to show all the various outcome rules defined for a course
+ 				List<OutcomeDefinition> definitions = defLoad.loadByCourseId(courseID);
+ 				out.println("<br/> OUTCOME DEFINITIONS <br />");
+ 				for (OutcomeDefinition definition : definitions) {
+ 					out.println(definition.getDescription() + " " + definition.getTitle() + "<br />");
+ 				}
+	
+			}
+			catch (Exception e) 
+			{
+				out.println("Error getting Aggregate Review Status <br />" + e.getLocalizedMessage());
+			}
+			
+			//List the gradable items
+			out.println("<br /> Gradable Items <br />");
+			for (GradableItem giX : lgm) {
+				out.println(giX.getTitle() + "<br />");				
+			}
+			
+//EXAMPLE OUTPUT			
+/*Jonathan Leftwich Test 
+CourseContent TOC 
+CP1 blackboard.data.content.Content PkId{key=_20_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850}
+CP2 blackboard.data.content.Content PkId{key=_21_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850}
+MySurvey blackboard.data.content.CourseLink PkId{key=_23_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850}
+GUI Master blackboard.data.content.CourseDocument PkId{key=_24_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850}
+Test1 blackboard.data.content.CourseLink PkId{key=_27_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850}
+
+Scores 
+PkId{key=_38_1, dataType=blackboard.data.course.CourseMembership, container=blackboard.persist.DatabaseContainer@43da850} - User Id 
+Line Item - Weighted Total=Weighted Total true
+Line Item - CP1=Assignment true
+Line Item - CP2=Assignment true
+Line Item - Running Total= true
+Line Item - Total=Total true
+Line Item - MySurvey=Survey true
+MySurvey 0.0 0.0
+Line Item - Test1=Test true
+
+Rules 2 
+
+Criteria 1 Rule 1 PkId{key=_21_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850} 
+blackboard.data.content.avlrule.AvailabilityCriteria$RuleType:GRADE_RANGE_PERCENT
+Grade GCC - 80.0
+Outcome - CP1
+
+Criteria 2 Rule 1 PkId{key=_24_1, dataType=blackboard.data.content.Content, container=blackboard.persist.DatabaseContainer@43da850} 
+blackboard.data.content.avlrule.AvailabilityCriteria$RuleType:GRADE_RANGE
+Grade GCC - 16.0
+Outcome - CP1 null
+Grade GCC - 25.0
+Outcome - CP2 null
+
+OUTCOME DEFINITIONS 
+The weighted sum of all grades for a user based on item or category weighting. Weighted Total
+null CP1
+null CP2
+Running Total
+The unweighted sum of all grades for a user. Total
+null MySurvey
+null Test1
+
+Gradable Items 
+Weighted Total
+CP1
+CP2
+XP GUI
+Total
+MySurvey
+Test1
+*/
+			
+			%>
+		</div>		
+ 	</body>
 </html>
 </bbData:context>

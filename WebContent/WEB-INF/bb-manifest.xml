@@ -39,6 +39,8 @@
 			<permission type="persist" name="Content" actions="create,modify,delete"/>
 			<permission type="attribute" name="user.authinfo" actions="get,set"/>
 			<permission type="attribute" name="user.personalinfo" actions="get,set"/>
+			<permission type="persist" name="OutcomeDefinition" actions="create,modify,delete"/>
+			<permission type="persist" name="OutcomeDefinitionCategory" actions="create,modify,delete"/>
 		</permissions>
 	</plugin>
 
