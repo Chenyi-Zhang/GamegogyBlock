@@ -11,7 +11,7 @@
 		</requires>
 		<vendor>
 			<id value="dt"/>
-			<name value="David Thornton"/>
+			<name value="Team Questpath"/>
 			<url value="http://www.jsu.edu/mcis/people/thornton.html" />
 			<description value="This is part of a research project." />
 		</vendor>
@@ -25,7 +25,7 @@
 				  <view>questpath.jsp</view>		
 				</jsp>		
 			</module-type>		
-			<module type="questpathblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="Gamegogy Questpath Block">		
+			<module type="questpathblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="false" title="Gamegogy Questpath Block" sort-priority="99999">		
 				<description>Description here.</description>		
 				<ExtraInfo />		
 				<module-groups>		
@@ -36,11 +36,8 @@
  
 		<!-- code permissions required for proper operation -->
 		<permissions>
-			<permission type="persist" name="Content" actions="create,modify,delete"/>
 			<permission type="attribute" name="user.authinfo" actions="get,set"/>
 			<permission type="attribute" name="user.personalinfo" actions="get,set"/>
-			<permission type="persist" name="OutcomeDefinition" actions="create,modify,delete"/>
-			<permission type="persist" name="OutcomeDefinitionCategory" actions="create,modify,delete"/>
 		</permissions>
 	</plugin>
 

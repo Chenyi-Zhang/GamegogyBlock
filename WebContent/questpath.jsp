@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<%@page import="blackboard.persist.content.impl.ContentDbPersisterImpl"%>
 <%@page import="com.jsu.cs521.questpath.buildingblock.object.QuestPathItem"%>
 <%@page import="blackboard.persist.content.avlrule.AvailabilityRuleDbPersister"%>
 <%@page import="blackboard.data.gradebook.impl.Grade"%>
@@ -87,6 +88,7 @@
 	}	
 		
 	String jsPath = PlugInUtil.getUri("dt", "questpathblock", "js/highcharts.js");
+	String imagePath = PlugInUtil.getUri("dt", "questpathblock", "images/");
 
 %>
 
@@ -94,14 +96,31 @@
 	<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Vital Statistics</title>
-
-<script type="text/javascript"
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<title>QuestPath</title>
+<style>
+table.qp
+{
+border: thin;
+}
+th.qp, td.qp
+{
+font-weight: bolder;
+font-size: medium;
+text-align: center;
+min-width: 130px;
+}
+.imgC 
+{
+	height: 120px;
+	width: 120px;
+	text-align: center;
+}
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <script type="text/javascript" src=<%=jsPath%>></script>
 <script type="text/javascript">		
 			jQueryAlias = $.noConflict();  //to avoid this webapp conflicting with others on the page
-		</script>
+</script>
 </head>
 <body>
 	<div id="questpathBlockChartContainer">
@@ -115,8 +134,8 @@
  			CourseTocDbLoader courseTocLoader = (CourseTocDbLoader)BbServiceManager.getPersistenceService().getDbPersistenceManager().getLoader(CourseTocDbLoader.TYPE);
  			ContentDbLoader contentDbLoader = (ContentDbLoader)BbServiceManager.getPersistenceService().getDbPersistenceManager().getLoader(ContentDbLoader.TYPE);
 
- 			//Gather the classes TABLE OF CONTENTS		
- 			ArrayList tocList = courseTocLoader.loadByCourseId(courseID);
+			//Gather the classes TABLE OF CONTENTS		
+ 			ArrayList<CourseToc> tocList = courseTocLoader.loadByCourseId(courseID);
  			Iterator tocIterator = tocList.iterator();
 
  			List<Content> children = new ArrayList<Content>();
@@ -128,10 +147,10 @@
  					children = contentDbLoader.loadChildren(cToc.getContentId(), false, null);
  				}
  			}
-
+ 			
 			LineitemDbLoader lineItemDbLoader = LineitemDbLoader.Default.getInstance();
 			List<Lineitem> lineitems = lineItemDbLoader.loadByCourseId(ctx.getCourseId());
-	
+		
 			QuestPathUtil qpUtil = new QuestPathUtil();
 			List<QuestPathItem> itemList = qpUtil.buildInitialList(ctx, children, lineitems);
 			
@@ -147,20 +166,68 @@
 			itemList = qpUtil.setInitialFinal(itemList);
 			itemList = qpUtil.removeNonAdaptiveReleaseContent(itemList);
 			itemList = qpUtil.setGradableQuestPathItemStatus(itemList, questRules);
+			itemList = qpUtil.setLockOrUnlocked(itemList, questRules);
 			
 			Processor proc = new Processor();
 			List<QuestPath> qPaths = proc.buildQuests(itemList);
-			for (QuestPath quest : qPaths) {
-				out.println("<br />");
-				for(QuestPathItem item : quest.getQuestPathItems()) {
-					out.println("<br />" + quest.getQuestName() + " " + item.getName());
-					out.println("<br /> Passed - " + item.isPassed());
-					out.println("<br /> Attempted (Retry) - " + item.isAttempted());
-					out.println("<br /> Unlocked - " + item.isUnLocked());
-					out.println("<br /> Locked - " + item.isLocked());
-				}
-			}
-%>
+// 			for (QuestPath quest : qPaths) {
+// 				out.println("<br />");
+// 				for(QuestPathItem item : quest.getQuestPathItems()) {
+// 					out.println("<br />" + quest.getQuestName() + " " + item.getName());
+// 					out.println("<br /> Passed - " + item.isPassed());
+// 					out.println("<br /> Attempted (Retry) - " + item.isAttempted());
+// 					out.println("<br /> Unlocked - " + item.isUnLocked());
+// 					out.println("<br /> Locked - " + item.isLocked());
+// 				}
+// 			}
+if (!isUserAnInstructor) {
+ for(QuestPath quest : qPaths) { 
+  quest = qpUtil.setQuest(quest); %>
+<h3><%=quest.getQuestName() %></h3>
+<table border="1px" class="qp">
+<tr>
+<th class="qp">Passed</th>
+<th class="qp">Attempted</th>
+<th class="qp">Unlocked</th>
+<th class="qp">Locked</th>
+</tr>
+<tr>
+<td class="qp">
+<%for (Integer i : quest.getPassedQuests()) { %>
+<img src="<%=imagePath %>passed2.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+" class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
+<% }%>
+<%for (Integer i : quest.getRewardItems()) { %>
+<img src="<%=imagePath %>reward.jpg" title="Reward - <%=quest.getQuestPathItems().get(i).getName() %>
+" class="imgC"/><br />Reward - <%=quest.getQuestPathItems().get(i).getName()%><br />	
+<% }%>
+
+</td>
+<td class="qp">
+<%for (Integer i : quest.getAttemptedQuests()) { %>
+<img src="<%=imagePath %>error.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+" class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
+<% }%>
+</td>
+<td class="qp">
+<%for (Integer i : quest.getUnlockedQuests()) { %>
+<img src="<%=imagePath %>unlocked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+" class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
+<% }%>
+</td>
+<td class="qp">
+<%for (Integer i : quest.getLockedQuests()) { %>
+<img src="<%=imagePath %>locked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+" class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
+<% }%>
+</td>
+</tr>
+</table>
+<br />
+<% }} 
+else {%>
+YOU HAVE ADDED QUESTPATH BLOCK FOR STUDENTS TO VIEW
+<%} %>
 </div>
 </body>
 </html>
