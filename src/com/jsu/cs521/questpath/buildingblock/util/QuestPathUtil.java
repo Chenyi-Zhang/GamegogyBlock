@@ -248,8 +248,11 @@ public class QuestPathUtil {
 			else if (item.isUnLocked()) {
 				qp.getUnlockedQuests().add(qp.getQuestPathItems().indexOf(item));
 			}
-			else {
+			else if (item.isGradable() && item.isLocked()){
 				qp.getLockedQuests().add(qp.getQuestPathItems().indexOf(item));
+			}
+			else {
+				qp.getLockedItems().add(qp.getQuestPathItems().indexOf(item));
 			}
 			
 		}

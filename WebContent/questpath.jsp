@@ -98,21 +98,34 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>QuestPath</title>
 <style>
+h3.qpHdr
+{
+color:maroon;
+font-size:large;
+padding-top: 12px;
+}
 table.qp
 {
 border: thin;
 }
 th.qp, td.qp
 {
-font-weight: bolder;
-font-size: medium;
 text-align: center;
 min-width: 130px;
 }
+th.qp
+{
+font-weight: bold;
+font-size: medium;
+}
+td.qp
+{
+font-size: medium;
+}
 .imgC 
 {
-	height: 120px;
-	width: 120px;
+	height: 70px;
+	width: 70px;
 	text-align: center;
 }
 </style>
@@ -124,7 +137,7 @@ min-width: 130px;
 </head>
 <body>
 	<div id="questpathBlockChartContainer">
-		<%= course.getTitle() %>
+<%-- 		<%= course.getTitle() %> --%>
 		<%
 			//****BELOW IS CODE THAT HAS BEEN COMPLETED TO SHOW the following
 			//    How to gather list of Content for a course
@@ -183,7 +196,14 @@ min-width: 130px;
 if (!isUserAnInstructor) {
  for(QuestPath quest : qPaths) { 
   quest = qpUtil.setQuest(quest); %>
-<h3><%=quest.getQuestName() %></h3>
+<h3 class="qpHdr"><%=quest.getQuestName() %>
+<%if (quest.getAttemptedQuests().size() == 0 
+   && quest.getUnlockedQuests().size() == 0 
+   && quest.getLockedItems().size() == 0 
+   && quest.getLockedQuests().size() == 0) {%>
+ <%=" COMPLETED" %>  
+ <%} %>
+</h3>
 <table border="1px" class="qp">
 <tr>
 <th class="qp">Passed</th>
@@ -194,38 +214,47 @@ if (!isUserAnInstructor) {
 <tr>
 <td class="qp">
 <%for (Integer i : quest.getPassedQuests()) { %>
-<img src="<%=imagePath %>passed2.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+<img src="<%=imagePath %>passed2.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
 " class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 <%for (Integer i : quest.getRewardItems()) { %>
 <img src="<%=imagePath %>reward.jpg" title="Reward - <%=quest.getQuestPathItems().get(i).getName() %>
-" class="imgC"/><br />Reward - <%=quest.getQuestPathItems().get(i).getName()%><br />	
+" class="imgC"/><br /><%=quest.getQuestPathItems().get(i).getName()%><br />	
 <% }%>
 
 </td>
 <td class="qp">
 <%for (Integer i : quest.getAttemptedQuests()) { %>
-<img src="<%=imagePath %>error.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+<img src="<%=imagePath %>error.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
 " class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 </td>
 <td class="qp">
 <%for (Integer i : quest.getUnlockedQuests()) { %>
-<img src="<%=imagePath %>unlocked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+<img src="<%=imagePath %>unlocked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
 " class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 </td>
 <td class="qp">
 <%for (Integer i : quest.getLockedQuests()) { %>
-<img src="<%=imagePath %>locked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() %>
+<img src="<%=imagePath %>locked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
 " class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
+<%for (Integer i : quest.getLockedItems()) { %>
+<img src="<%=imagePath %>locked-reward.jpg" title="Reward - <%=quest.getQuestPathItems().get(i).getName() %>
+" class="imgC"/><br /><%=quest.getQuestPathItems().get(i).getName()%><br />	
+<% }%>
+
 </td>
 </tr>
 </table>
-<br />
-<% }} 
-else {%>
+<% } %>
+<br /> <label>Hover over Quest Item to see associated Assignment Information</label> 
+<% } else {%>
 YOU HAVE ADDED QUESTPATH BLOCK FOR STUDENTS TO VIEW
 <%} %>
 </div>

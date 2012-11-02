@@ -12,6 +12,7 @@ public class QuestPath {
 	private List<Integer> unlockedQuests = new ArrayList<Integer>();
 	private List<Integer> lockedQuests = new ArrayList<Integer>();
 	private List<Integer> rewardItems = new ArrayList<Integer>();
+	private List<Integer> lockedItems = new ArrayList<Integer>();
 
 	public List<QuestPathItem> getQuestPathItems() {
 		return questPathItems;
@@ -76,7 +77,13 @@ public class QuestPath {
 	public void setRewardItems(List<Integer> rewardItems) {
 		this.rewardItems = rewardItems;
 	}
-		
-	
+
+	public List<Integer> getLockedItems() {
+		return lockedItems;
+	}
+
+	public void setLockedItems(List<Integer> lockedItems) {
+		this.lockedItems = lockedItems;
+	}
 
 }
