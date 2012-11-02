@@ -12,7 +12,13 @@
 <%@ taglib uri="/bbData" prefix="bbData"%>                                      <!-- for tags -->
 <bbData:context id="ctx">  <!-- to allow access to the session variables -->
 <%
-
+	String sessionUserRole = ctx.getCourseMembership().getRoleAsString();
+	out.println(sessionUserRole+"<br>");
+	boolean isUserAnInstructor = false;
+	if (sessionUserRole.trim().toLowerCase().equals("instructor")) {
+		isUserAnInstructor = true;
+	}
+	
         //create a student class to hold their grades and other info
         final class Student{
             public Double score;
@@ -32,7 +38,14 @@
                 this.isFemale = isFemale;
             }
         } //end of class Student
+	
         Student currStudent = new Student(null, null, null, null, null, null, null);
+        
+	double max = 0; 
+	double xpnextlevel = 0;
+        
+	if (!isUserAnInstructor) {
+		
         currStudent.firstName = ctx.getUser().getGivenName();
         currStudent.lastName = ctx.getUser().getFamilyName();
         if (ctx.getUser().getGender().toString().trim().toLowerCase().equalsIgnoreCase("blackboard.data.user.User$Gender:FEMALE")){
@@ -107,8 +120,6 @@
         if( currStudent.score >=600 && currStudent.score < 1000){ currStudent.playerLevel = "4";}
         if( currStudent.score >=1000){ currStudent.playerLevel = "5";}
         
-        double max = 0; 
-        double xpnextlevel = 0;
         if( currStudent.playerLevel.trim().toLowerCase().equalsIgnoreCase("1")) {
                 max = 100; 
                 xpnextlevel = max - currStudent.score; 
@@ -175,10 +186,8 @@
 				}
 			}
 		}
-
-        
-        String imagePath = PlugInUtil.getUri("dt", "gamercardblock", "images/");
-        
+	}
+	String imagePath = PlugInUtil.getUri("dt", "gamercardblock", "images/");
 %>
 <!DOCTYPE html>
 <html>
@@ -187,28 +196,37 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 	<script>
-		var currStudentscore = <%=currStudent.score%>;
-		var max =<%=max%>;
-		var thegender = <%=currStudent.isFemale%>;
-		$(document).ready(
-			function() {
-					$("#progressbar").progressbar({max: max, value: currStudentscore, showtext:true,percentage:true});
-					if (thegender == true){
-						$("#avatar").append('<img src="<%=imagePath%>female.png">');
-					}
-					else if (thegender == false) {
-						$("#avatar").append('<img src="<%=imagePath%>male.png">');
-					}
-			}
-
-		);
-
+		var isInstructor = <%=isUserAnInstructor%>;
+		if (!isInstructor) {
+			var currStudentscore = <%=currStudent.score%>;
+			var max =<%=max%>;
+			var thegender = <%=currStudent.isFemale%>;
+			$(document).ready(
+				function() {
+						$("#progressbar").progressbar({max: max, value: currStudentscore, showtext:true,percentage:true});
+						if (thegender == true){
+							$("#avatar").append('<img src="<%=imagePath%>female.png">');
+						}
+						else if (thegender == false) {
+							$("#avatar").append('<img src="<%=imagePath%>male.png">');
+						}
+				}
+			);
+		}
+		else {
+			$(document).ready(
+				function() {
+					$("#instructor").append("Place Instructions Here");
+				}
+			);
+		}
 	</script>
 </head>
 <body>
 
 <div id="progressbar"></div>
 <div id="avatar"></div>
+<div id="instructor"></div>
 
 </body>
 </html>
