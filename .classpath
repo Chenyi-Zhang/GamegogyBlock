@@ -8,9 +8,9 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/bb-cms-admin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/bb-platform.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/bb-taglibs.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Andrew/Desktop/CS 521/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xavier/Dropbox/FALL 2012/CS521/Setting Up Your Blackboard Building Block Development Environment/bb-cms-admin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xavier/Dropbox/FALL 2012/CS521/Setting Up Your Blackboard Building Block Development Environment/bb-platform.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xavier/Dropbox/FALL 2012/CS521/Setting Up Your Blackboard Building Block Development Environment/bb-taglibs.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Xavier/Dropbox/FALL 2012/CS521/Setting Up Your Blackboard Building Block Development Environment/servlet-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
