@@ -151,23 +151,33 @@ public class QuestPathUtil {
 			boolean passed = false;
 			boolean attempted = false;
 			if (item.isGradable()) {
-				for(QuestRule rule : rules) {
-					for (RuleCriteria ruleC : rule.getCriterias()) {
-						if(ruleC.getParentContent().equals(item.getName())) {
-							if (ruleC.isGradePercent()) {
-								if (item.getPointsEarned() > 0 && item.getPercentageEarned() < ruleC.getMinScore()) {
-									attempted = true;
+				if (item.isLastQuestItem()) {
+					if(item.getPercentageEarned() > 80) {
+						passed = true;
+					} else if(item.getPointsEarned() > 0) {
+						attempted = true;						
+					}
+
+				}
+				else {
+					for(QuestRule rule : rules) {
+						for (RuleCriteria ruleC : rule.getCriterias()) {
+							if(ruleC.getParentContent().equals(item.getName())) {
+								if (ruleC.isGradePercent()) {
+									if (item.getPointsEarned() > 0 && item.getPercentageEarned() < ruleC.getMinScore()) {
+										attempted = true;
+									}
+									if (item.getPercentageEarned() >= ruleC.getMinScore()) {
+										passed = true;
+									}
 								}
-								if (item.getPercentageEarned() >= ruleC.getMinScore()) {
-									passed = true;
-								}
-							}
-							if (ruleC.isGradeRange()) {
-								if (item.getPointsEarned() > 0 &&  item.getPointsEarned() < ruleC.getMinScore()) {
-									attempted = true;
-								}
-								if (item.getPointsEarned() >= ruleC.getMinScore()) {
-									passed = true;
+								if (ruleC.isGradeRange()) {
+									if (item.getPointsEarned() > 0 &&  item.getPointsEarned() < ruleC.getMinScore()) {
+										attempted = true;
+									}
+									if (item.getPointsEarned() >= ruleC.getMinScore()) {
+										passed = true;
+									}
 								}
 							}
 						}
@@ -188,13 +198,6 @@ public class QuestPathUtil {
 	}
 
 	public List<QuestPathItem> setLockOrUnlocked(List<QuestPathItem> items, List<QuestRule> rules) {
-		//TODO
-		/*
-		 * See if Item associated QuestPathItems are passed or attempted
-		 * If all passed and not attempted - set to unlocked
-		 * If attempted and passed exists - set to locked
-		 * If not attempted and not passed - set to locked
-		 */
 		for (QuestPathItem item : items) {
 			boolean locked = false;
 			boolean unlocked = false;
@@ -233,7 +236,7 @@ public class QuestPathUtil {
 		}
 		return items;
 	}
-	
+
 	public QuestPath setQuest(QuestPath qp) {
 		for (QuestPathItem item : qp.getQuestPathItems()) {
 			if (item.isUnLocked() && item.isPassed()) {
@@ -254,7 +257,7 @@ public class QuestPathUtil {
 			else {
 				qp.getLockedItems().add(qp.getQuestPathItems().indexOf(item));
 			}
-			
+
 		}
 		return qp;
 	}
