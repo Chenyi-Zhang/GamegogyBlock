@@ -9,7 +9,13 @@ import com.jsu.cs521.questpath.buildingblock.object.QuestPathItem;
 public class Processor {
 	
 	private int i = 1;
-
+/**
+ * This method builds a QuestPath for each initial Quest Path Item
+ * It then loops through the remaining Quest Path Items to apply them
+ * to the appropriate Quest Path.
+ * @param items - A list of Quest Path Items
+ * @return
+ */
 	public List<QuestPath> buildQuests(List<QuestPathItem> items) {
 		List<QuestPathItem> tempListA = new ArrayList<QuestPathItem>();
 		tempListA.addAll(items);
@@ -51,9 +57,6 @@ public class Processor {
 			tempListA.addAll(tempListB);
 			prevSize = tempListA.size();
 		}
-			
-				
-		
 		return paths;
 	}
 	

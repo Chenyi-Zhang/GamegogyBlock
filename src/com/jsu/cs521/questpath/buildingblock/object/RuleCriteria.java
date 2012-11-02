@@ -1,5 +1,12 @@
 package com.jsu.cs521.questpath.buildingblock.object;
 
+/**
+ * For release 1.0 Adaptive Release rules of Grade Range and Grade Range Percent are 
+ * considered as well as anticipating that an assigment will have to exceed the min score
+ * to pass the criteria (for example Content foo will have to exceed Min Score 80
+ * @author JBLeftwich
+ *
+ */
 public class RuleCriteria {
 	private boolean isGradeRange;
 	private boolean isGradePercent;

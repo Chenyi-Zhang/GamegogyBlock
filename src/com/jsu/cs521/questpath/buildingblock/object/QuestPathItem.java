@@ -5,6 +5,12 @@ import java.util.List;
 
 import blackboard.persist.Id;
 
+/**
+ * A QuestPathItem is any Course Content located that is a test, assignment, or item
+ * that has adaptive rules attached or dependent on to the content being processed.
+ * @author JBLeftwich
+ *
+ */
 public class QuestPathItem {
 	
 	private Id contentId;

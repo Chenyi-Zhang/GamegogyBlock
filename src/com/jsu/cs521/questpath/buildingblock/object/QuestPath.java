@@ -3,6 +3,13 @@ package com.jsu.cs521.questpath.buildingblock.object;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class QuestPath represents a list of Quests grouped together.
+ * The List<Integer> variables provide a way to locate Quest Path Items of
+ * a specific type
+ * @author JBLeftwich
+ *
+ */
 public class QuestPath {
 	private List<QuestPathItem> questPathItems = new ArrayList<QuestPathItem>();
 	private String questName = "";

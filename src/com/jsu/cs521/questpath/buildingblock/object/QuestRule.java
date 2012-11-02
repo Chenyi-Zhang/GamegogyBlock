@@ -5,6 +5,12 @@ import java.util.List;
 
 import blackboard.persist.Id;
 
+/**
+ * QuestRule is a list of adaptive release rules, the content the rules apply to,
+ * as well as the criteria that must be met to pass the rules
+ * @author JBLeftwich
+ *
+ */
 public class QuestRule {
 	private Id ruleId;
 	private Id contentId;

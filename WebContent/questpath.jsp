@@ -17,7 +17,6 @@
 -->
 
 <%@page import="blackboard.persist.content.impl.ContentDbPersisterImpl"%>
-<%@page import="com.jsu.cs521.questpath.buildingblock.object.QuestPathItem"%>
 <%@page import="blackboard.persist.content.avlrule.AvailabilityRuleDbPersister"%>
 <%@page import="blackboard.data.gradebook.impl.Grade"%>
 <%@page import="blackboard.data.content.avlrule.GradeRangeCriteria"%>
@@ -87,7 +86,7 @@
 		isUserAnInstructor = true;
 	}	
 		
-	String jsPath = PlugInUtil.getUri("dt", "questpathblock", "js/highcharts.js");
+//	String jsPath = PlugInUtil.getUri("dt", "questpathblock", "js/highcharts.js");
 	String imagePath = PlugInUtil.getUri("dt", "questpathblock", "images/");
 
 %>
@@ -98,7 +97,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>QuestPath</title>
 <style>
-h3.qpHdr
+h3.qpHdr1
+{
+text-align: center;
+color:maroon;
+font-size:large;
+padding-bottom: 8px;
+}
+h3.qpHdr2
 {
 color:maroon;
 font-size:large;
@@ -106,7 +112,7 @@ padding-top: 12px;
 }
 table.qp
 {
-border: thin;
+border: 1px;
 }
 th.qp, td.qp
 {
@@ -130,7 +136,7 @@ font-size: medium;
 }
 </style>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-<script type="text/javascript" src=<%=jsPath%>></script>
+<%-- <script type="text/javascript" src=<%=jsPath%>></script> --%>
 <script type="text/javascript">		
 			jQueryAlias = $.noConflict();  //to avoid this webapp conflicting with others on the page
 </script>
@@ -160,7 +166,7 @@ font-size: medium;
  					children = contentDbLoader.loadChildren(cToc.getContentId(), false, null);
  				}
  			}
- 			
+ 			 			 			
 			LineitemDbLoader lineItemDbLoader = LineitemDbLoader.Default.getInstance();
 			List<Lineitem> lineitems = lineItemDbLoader.loadByCourseId(ctx.getCourseId());
 		
@@ -183,20 +189,13 @@ font-size: medium;
 			
 			Processor proc = new Processor();
 			List<QuestPath> qPaths = proc.buildQuests(itemList);
-// 			for (QuestPath quest : qPaths) {
-// 				out.println("<br />");
-// 				for(QuestPathItem item : quest.getQuestPathItems()) {
-// 					out.println("<br />" + quest.getQuestName() + " " + item.getName());
-// 					out.println("<br /> Passed - " + item.isPassed());
-// 					out.println("<br /> Attempted (Retry) - " + item.isAttempted());
-// 					out.println("<br /> Unlocked - " + item.isUnLocked());
-// 					out.println("<br /> Locked - " + item.isLocked());
-// 				}
-// 			}
+%>
+<h3 class='qpHdr1'>AVAILABLE QUEST PATHS</h3>
+<%
 if (!isUserAnInstructor) {
  for(QuestPath quest : qPaths) { 
   quest = qpUtil.setQuest(quest); %>
-<h3 class="qpHdr"><%=quest.getQuestName() %>
+<h3 class="qpHdr2"><%=quest.getQuestName() %>
 <%if (quest.getAttemptedQuests().size() == 0 
    && quest.getUnlockedQuests().size() == 0 
    && quest.getLockedItems().size() == 0 

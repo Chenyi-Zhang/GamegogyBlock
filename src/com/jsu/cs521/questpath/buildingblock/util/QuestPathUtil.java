@@ -21,8 +21,18 @@ import com.jsu.cs521.questpath.buildingblock.object.QuestPathItem;
 import com.jsu.cs521.questpath.buildingblock.object.QuestRule;
 import com.jsu.cs521.questpath.buildingblock.object.RuleCriteria;
 
+/**
+ * Utility Class to mold the QuestPathItems into a QuestPath
+ * @author JBLeftwich
+ *
+ */
 public class QuestPathUtil {
 
+	/**
+	 * Remove any content found for the course that does not have a rule associated
+	 * @param allItems
+	 * @return
+	 */
 	public List<QuestPathItem> removeNonAdaptiveReleaseContent(List<QuestPathItem> allItems) {
 		List<QuestPathItem> finalList = new ArrayList<QuestPathItem>();
 		for (QuestPathItem qPI : allItems) {
@@ -34,6 +44,18 @@ public class QuestPathUtil {
 		return finalList;
 	}
 
+	/**
+	 * Set QuestPathItems that are first task as well as last task
+	 * This is done based on the size of child content and parent content
+	 * Child Content applies to content which has rules dependent on the score received
+	 * for the Quest Path Item
+	 * Parent Content applies to content that a QuestPathItem is dependent upon
+	 * For example if XP1 must be completed before XP2 can be assignable
+	 * XP1 is a parent content to XP2
+	 * XP2 is a child content to XP1 
+	 * @param allItems
+	 * @return
+	 */
 	public List<QuestPathItem> setInitialFinal(List<QuestPathItem> allItems) {
 		for (QuestPathItem qPI : allItems) {
 			if (qPI.getChildContent().size() > 0 && qPI.getParentContent().size() == 0) 
@@ -48,6 +70,18 @@ public class QuestPathUtil {
 		return allItems;
 	}
 
+	/**
+	 * Populate parent/child relationships based on QuestRules
+	 * Child Content applies to content which has rules dependent on the score received
+	 * for the Quest Path Item
+	 * Parent Content applies to content that a QuestPathItem is dependent upon
+	 * For example if XP1 must be completed before XP2 can be assignable
+	 * XP1 is a parent content to XP2
+	 * XP2 is a child content to XP1
+	 * @param allItems
+	 * @param allRules
+	 * @return
+	 */
 	public List<QuestPathItem> setParentChildList(List<QuestPathItem> allItems, List<QuestRule> allRules) {
 		for (QuestPathItem item : allItems) {
 			for (QuestRule rule : allRules) {
@@ -67,6 +101,15 @@ public class QuestPathUtil {
 		return allItems;
 	}
 
+	/**
+	 * A list of content for a course is provided to the method as will as the Line Items of the Gradebook
+	 * It is as this step we can see if content is gradable, as well as capture the most recent score for 
+	 * the content. 
+	 * @param context
+	 * @param contentItems
+	 * @param lineitems
+	 * @return
+	 */
 	public List<QuestPathItem> buildInitialList(Context context, List<Content> contentItems, List<Lineitem> lineitems) {
 		List<QuestPathItem> initialList = new ArrayList<QuestPathItem>();
 		for (Content c : contentItems) {
@@ -96,6 +139,15 @@ public class QuestPathUtil {
 		return initialList;
 	}
 
+	/**
+	 * Adaptive Release Rules are retrieved
+	 * @param rules
+	 * @param avCriLoader
+	 * @param defLoad
+	 * @return
+	 * @throws KeyNotFoundException
+	 * @throws PersistenceException
+	 */
 	public List<QuestRule> buildQuestRules(List<AvailabilityRule> rules, AvailabilityCriteriaDbLoader avCriLoader, OutcomeDefinitionDbLoader defLoad ) throws KeyNotFoundException, PersistenceException {
 		List<QuestRule> questRules = new ArrayList<QuestRule>();
 		for(AvailabilityRule rule : rules) {
@@ -134,18 +186,15 @@ public class QuestPathUtil {
 		return questRules;
 	}
 
-	//	public List<QuestPathItem> setQuestItemRule(List<QuestPathItem> allItems, List<QuestRule> rules) {
-	//		for (QuestRule rule : rules) {
-	//			for (QuestPathItem item : allItems) {
-	//				if (rule.getContentId().equals(item.getContentId())) {
-	//					item.setCriteria(rule.getCriterias());
-	//				}
-	//			}	
-	//		}	
-	//		//TODO Loop through Quest Items and set Child Parent Relationships
-	//		return this.removeNonAdaptiveReleaseContent(allItems);
-	//	}
-
+	/**
+	 * Set gradable items as passed or attempted
+	 * If a grade is not found for the item (0.0 points earned) bypass setting status
+	 * If a Quest Path Item is the last quest item (meaning no child content) and a score of 80% is received or higher
+	 * mark as passed, otherwise mark attempted if a grade is found.
+	 * @param items
+	 * @param rules
+	 * @return
+	 */
 	public List<QuestPathItem> setGradableQuestPathItemStatus(List<QuestPathItem> items, List<QuestRule> rules) {
 		for (QuestPathItem item : items) {
 			boolean passed = false;
@@ -197,6 +246,12 @@ public class QuestPathUtil {
 		return items;
 	}
 
+	/**
+	 * Decide if QuestPathItems are locked or unlocked
+	 * @param items
+	 * @param rules
+	 * @return
+	 */
 	public List<QuestPathItem> setLockOrUnlocked(List<QuestPathItem> items, List<QuestRule> rules) {
 		for (QuestPathItem item : items) {
 			boolean locked = false;
@@ -237,6 +292,12 @@ public class QuestPathUtil {
 		return items;
 	}
 
+	/**
+	 * Finalize Quest and determine if gradable content is part of the Passed, Attempted, Unlocked, or Locked List
+	 * Also, determine if non-gradable items are Passed or Locked
+	 * @param qp
+	 * @return
+	 */
 	public QuestPath setQuest(QuestPath qp) {
 		for (QuestPathItem item : qp.getQuestPathItems()) {
 			if (item.isUnLocked() && item.isPassed()) {
