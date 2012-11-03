@@ -27,7 +27,7 @@ public class Processor {
 				QuestPath newPath = new QuestPath();
 				newPath.getQuestPathItems().add(item);
 				newPath.getQuestItemNames().add(item.getName());
-				newPath.setQuestName("QuestPath - " + i);
+				newPath.setQuestName("Quest Path - " + i);
 				tempListB.remove(item);
 				i++;
 				paths.add(newPath);

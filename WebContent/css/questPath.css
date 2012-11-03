@@ -1,0 +1,37 @@
+h3.qpHdr1
+{
+text-align: center;
+color:maroon;
+font-size:large;
+padding-bottom: 8px;
+}
+h3.qpHdr2
+{
+color:maroon;
+font-size:large;
+padding-top: 12px;
+}
+table.qp
+{
+border: 1px;
+}
+th.qp, td.qp
+{
+text-align: center;
+min-width: 130px;
+}
+th.qp
+{
+font-weight: bold;
+font-size: medium;
+}
+td.qp
+{
+font-size: medium;
+}
+.imgC 
+{
+	height: 70px;
+	width: 70px;
+	text-align: center;
+}

@@ -1,5 +1,5 @@
 <!-- 
-	Gamegogy Leaderboard 1.0
+	Gamegogy Quest Path 1.0
     Copyright (C) 2012  David Thornton
 
     This program is free software: you can redistribute it and/or modify
@@ -88,53 +88,16 @@
 		
 //	String jsPath = PlugInUtil.getUri("dt", "questpathblock", "js/highcharts.js");
 	String imagePath = PlugInUtil.getUri("dt", "questpathblock", "images/");
+	String cssPath = PlugInUtil.getUri("dt", "questpathblock", "css/questPath.css");
 
 %>
 
-	<!DOCTYPE HTML>
-	<html>
+<!DOCTYPE HTML>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>QuestPath</title>
-<style>
-h3.qpHdr1
-{
-text-align: center;
-color:maroon;
-font-size:large;
-padding-bottom: 8px;
-}
-h3.qpHdr2
-{
-color:maroon;
-font-size:large;
-padding-top: 12px;
-}
-table.qp
-{
-border: 1px;
-}
-th.qp, td.qp
-{
-text-align: center;
-min-width: 130px;
-}
-th.qp
-{
-font-weight: bold;
-font-size: medium;
-}
-td.qp
-{
-font-size: medium;
-}
-.imgC 
-{
-	height: 70px;
-	width: 70px;
-	text-align: center;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="<%=cssPath %>" />
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <%-- <script type="text/javascript" src=<%=jsPath%>></script> --%>
 <script type="text/javascript">		
@@ -142,31 +105,20 @@ font-size: medium;
 </script>
 </head>
 <body>
-	<div id="questpathBlockChartContainer">
-<%-- 		<%= course.getTitle() %> --%>
+	<div id="questpathBlockContainer">
 		<%
-			//****BELOW IS CODE THAT HAS BEEN COMPLETED TO SHOW the following
-			//    How to gather list of Content for a course
-			//    How to get a list of items that compose the gradebook
-			//    How to get a students grade(s) associated to the gradebook items
-			//    How to get if rules are associated with assignments
- 			CourseTocDbLoader courseTocLoader = (CourseTocDbLoader)BbServiceManager.getPersistenceService().getDbPersistenceManager().getLoader(CourseTocDbLoader.TYPE);
- 			ContentDbLoader contentDbLoader = (ContentDbLoader)BbServiceManager.getPersistenceService().getDbPersistenceManager().getLoader(ContentDbLoader.TYPE);
 
-			//Gather the classes TABLE OF CONTENTS		
- 			ArrayList<CourseToc> tocList = courseTocLoader.loadByCourseId(courseID);
- 			Iterator tocIterator = tocList.iterator();
-
+ 			CourseTocDbLoader cTocLoader = CourseTocDbLoader.Default.getInstance();
+ 			ContentDbLoader cntDbLoader = ContentDbLoader.Default.getInstance();
+ 			
+ 			List<CourseToc> tList = cTocLoader.loadByCourseId(ctx.getCourseId());
  			List<Content> children = new ArrayList<Content>();
- 			while(tocIterator.hasNext())
- 			{
- 				CourseToc cToc = (CourseToc)tocIterator.next();
- 				if(cToc.getTargetType()==CourseToc.Target.CONTENT)
- 				{
- 					children = contentDbLoader.loadChildren(cToc.getContentId(), false, null);
+ 			for (CourseToc t : tList ) {
+ 				if (t.getTargetType() == CourseToc.Target.CONTENT) {
+					children.addAll(cntDbLoader.loadChildren(t.getContentId(), false, null));
  				}
  			}
- 			 			 			
+ 			 			
 			LineitemDbLoader lineItemDbLoader = LineitemDbLoader.Default.getInstance();
 			List<Lineitem> lineitems = lineItemDbLoader.loadByCourseId(ctx.getCourseId());
 		
@@ -174,7 +126,6 @@ font-size: medium;
 			List<QuestPathItem> itemList = qpUtil.buildInitialList(ctx, children, lineitems);
 			
 			AvailabilityRuleDbLoader avRuleLoader = AvailabilityRuleDbLoader.Default.getInstance();
-			AvailabilityRuleDbPersister avPer =  AvailabilityRuleDbPersister.Default.getInstance();
 			AvailabilityCriteriaDbLoader avCriLoader = AvailabilityCriteriaDbLoader.Default.getInstance();
 			OutcomeDefinitionDbLoader defLoad = OutcomeDefinitionDbLoader.Default.getInstance();				
 			//Load ADAPTIVE RELEASE rules
@@ -203,7 +154,7 @@ if (!isUserAnInstructor) {
  <%=" COMPLETED" %>  
  <%} %>
 </h3>
-<table border="1px" class="qp">
+<table border="1" class="qp">
 <tr>
 <th class="qp">Passed</th>
 <th class="qp">Attempted</th>
@@ -225,16 +176,18 @@ if (!isUserAnInstructor) {
 </td>
 <td class="qp">
 <%for (Integer i : quest.getAttemptedQuests()) { %>
+<a title='CP1' href="../../execute/uploadAssignment?content_id=<%=quest.getQuestPathItems().get(i).getContentId().getExternalString()%>&course_id=<%=ctx.getCourseId().toExternalString()%>&assign_group_id=&mode=view">
 <img src="<%=imagePath %>error.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
 + " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
-" class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
+" class="imgC"/></a><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 </td>
 <td class="qp">
 <%for (Integer i : quest.getUnlockedQuests()) { %>
+<a title='CP1' href="../../execute/uploadAssignment?content_id=<%=quest.getQuestPathItems().get(i).getContentId().getExternalString()%>&course_id=<%=ctx.getCourseId().toExternalString()%>&assign_group_id=&mode=view">
 <img src="<%=imagePath %>unlocked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
 + " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
-" class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
+" class="imgC"/></a><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 </td>
 <td class="qp">
@@ -247,7 +200,6 @@ if (!isUserAnInstructor) {
 <img src="<%=imagePath %>locked-reward.jpg" title="Reward - <%=quest.getQuestPathItems().get(i).getName() %>
 " class="imgC"/><br /><%=quest.getQuestPathItems().get(i).getName()%><br />	
 <% }%>
-
 </td>
 </tr>
 </table>
