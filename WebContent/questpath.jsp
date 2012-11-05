@@ -107,11 +107,13 @@
 <body>
 	<div id="questpathBlockContainer">
 		<%
-
+		//Load Course Table of Content
  			CourseTocDbLoader cTocLoader = CourseTocDbLoader.Default.getInstance();
  			ContentDbLoader cntDbLoader = ContentDbLoader.Default.getInstance();
  			
  			List<CourseToc> tList = cTocLoader.loadByCourseId(ctx.getCourseId());
+ 			
+ 		//Create an ArrayList of Content based on the TOC
  			List<Content> children = new ArrayList<Content>();
  			for (CourseToc t : tList ) {
  				if (t.getTargetType() == CourseToc.Target.CONTENT) {
@@ -119,12 +121,15 @@
  				}
  			}
  			 			
-			LineitemDbLoader lineItemDbLoader = LineitemDbLoader.Default.getInstance();
+		//Load grades for gradable Lineitems
+ 			LineitemDbLoader lineItemDbLoader = LineitemDbLoader.Default.getInstance();
 			List<Lineitem> lineitems = lineItemDbLoader.loadByCourseId(ctx.getCourseId());
 		
 			QuestPathUtil qpUtil = new QuestPathUtil();
 			List<QuestPathItem> itemList = qpUtil.buildInitialList(ctx, children, lineitems);
-			
+	
+		//Create Loaders for Availability Rules, Criteria and Outcome
+		//These loaders will allow us to capture Adaptive Release Information
 			AvailabilityRuleDbLoader avRuleLoader = AvailabilityRuleDbLoader.Default.getInstance();
 			AvailabilityCriteriaDbLoader avCriLoader = AvailabilityCriteriaDbLoader.Default.getInstance();
 			OutcomeDefinitionDbLoader defLoad = OutcomeDefinitionDbLoader.Default.getInstance();				
