@@ -33,4 +33,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Leaderboard1.0</name>
+			<type>2</type>
+			<location>C:/Users/Xavier/Desktop/Leaderboard1.0</location>
+		</link>
+	</linkedResources>
 </projectDescription>
