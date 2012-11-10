@@ -25,7 +25,7 @@
 				  <view>questpath.jsp</view>		
 				</jsp>		
 			</module-type>		
-			<module type="questpathblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="false" title="Gamegogy Quest Path Block" sort-priority="99999">		
+			<module type="questpathblock" isadmin="true" isavailabletocourse="true" useraddable="true" isdeletable="true" isdetachable="true" title="Gamegogy Quest Path Block" sort-priority="99999">		
 				<description>Description here.</description>		
 				<ExtraInfo />		
 				<module-groups>		

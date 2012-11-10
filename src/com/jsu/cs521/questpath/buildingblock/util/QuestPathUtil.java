@@ -95,7 +95,19 @@ public class QuestPathUtil {
 						}
 					}
 				}
-
+			}
+			if (item.getParentContent().size() > 0) {
+				boolean subsequentRule = false;
+				StringBuilder sb = new StringBuilder();
+				for (String pc : item.getParentContent()) {
+					if (!subsequentRule) {
+						sb.append(" Item will be unlocked when the following Quest Path Items are completed: " + pc);
+					} else {
+						sb.append("," + pc);
+					}
+				}
+				sb.append(".");
+				item.setUnlockRule(sb.toString());
 			}
 		}
 		return allItems;
@@ -204,29 +216,44 @@ public class QuestPathUtil {
 					if(item.getPercentageEarned() > 80) {
 						passed = true;
 					} else if(item.getPointsEarned() > 0) {
-						attempted = true;						
+						attempted = true;					
+						item.setCompleteRule(" Quest Path Item will be complete when a score of 80% or higher is scored.");
 					}
 
 				}
 				else {
 					for(QuestRule rule : rules) {
+						int i = 1;
 						for (RuleCriteria ruleC : rule.getCriterias()) {
 							if(ruleC.getParentContent().equals(item.getName())) {
 								if (ruleC.isGradePercent()) {
 									if (item.getPointsEarned() > 0 && item.getPercentageEarned() < ruleC.getMinScore()) {
 										attempted = true;
+										item.setCompleteRule(" Rule " + i + " Quest Path Item will be complete when a score of " + ruleC.getMinScore() + "%" + " or higher is scored.");
+										i++;
 									}
-									if (item.getPercentageEarned() >= ruleC.getMinScore()) {
+									else if (item.getPercentageEarned() >= ruleC.getMinScore()) {
 										passed = true;
+									}
+									else {
+										item.setCompleteRule(" Rule " + i + " Quest Path Item will be complete when a score of " + ruleC.getMinScore() + "%" + " or higher is scored.");
+										i++;
 									}
 								}
 								if (ruleC.isGradeRange()) {
 									if (item.getPointsEarned() > 0 &&  item.getPointsEarned() < ruleC.getMinScore()) {
 										attempted = true;
+										item.setCompleteRule("Rule " + i + " Quest Path Item will be complete when a score of " + ruleC.getMinScore() +  " or higher is scored.");
+										i++;
 									}
-									if (item.getPointsEarned() >= ruleC.getMinScore()) {
+									else if (item.getPointsEarned() >= ruleC.getMinScore()) {
 										passed = true;
 									}
+									else {
+										item.setCompleteRule(" Rule " + i + " Quest Path Item will be complete when a score of " + ruleC.getMinScore() + "%" + " or higher is scored.");
+										i++;
+									}
+
 								}
 							}
 						}
