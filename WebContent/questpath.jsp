@@ -96,7 +96,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>QuestPath</title>
+<title>QuestPath 1.0.2</title>
 <link rel="stylesheet" type="text/css" href="<%=cssPath %>" />
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <%-- <script type="text/javascript" src=<%=jsPath%>></script> --%>
@@ -183,7 +183,7 @@ if (!isUserAnInstructor) {
 <%for (Integer i : quest.getAttemptedQuests()) { %>
 <a title='CP1' href="../../execute/uploadAssignment?content_id=<%=quest.getQuestPathItems().get(i).getContentId().getExternalString()%>&course_id=<%=ctx.getCourseId().toExternalString()%>&assign_group_id=&mode=view">
 <img src="<%=imagePath %>error.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
-+ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() + quest.getQuestPathItems().get(i).getCompleteRule() %>
 " class="imgC"/></a><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 </td>
@@ -191,18 +191,18 @@ if (!isUserAnInstructor) {
 <%for (Integer i : quest.getUnlockedQuests()) { %>
 <a title='CP1' href="../../execute/uploadAssignment?content_id=<%=quest.getQuestPathItems().get(i).getContentId().getExternalString()%>&course_id=<%=ctx.getCourseId().toExternalString()%>&assign_group_id=&mode=view">
 <img src="<%=imagePath %>unlocked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
-+ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() + quest.getQuestPathItems().get(i).getCompleteRule() %>
 " class="imgC"/></a><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 </td>
 <td class="qp">
 <%for (Integer i : quest.getLockedQuests()) { %>
 <img src="<%=imagePath %>locked.jpg" title="Assignment - <%=quest.getQuestPathItems().get(i).getName() 
-+ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible() %>
++ " " + quest.getQuestPathItems().get(i).getPointsEarned() + "/" + quest.getQuestPathItems().get(i).getPointsPossible()  + quest.getQuestPathItems().get(i).getUnlockRule()%>
 " class="imgC"/><br />XP <%=quest.getQuestPathItems().get(i).getPointsPossible()%><br />	
 <% }%>
 <%for (Integer i : quest.getLockedItems()) { %>
-<img src="<%=imagePath %>locked-reward.jpg" title="Reward - <%=quest.getQuestPathItems().get(i).getName() %>
+<img src="<%=imagePath %>locked-reward.jpg" title="Reward - <%=quest.getQuestPathItems().get(i).getName()  + quest.getQuestPathItems().get(i).getUnlockRule()%>
 " class="imgC"/><br /><%=quest.getQuestPathItems().get(i).getName()%><br />	
 <% }%>
 </td>
