@@ -27,6 +27,8 @@ public class QuestPathItem {
 	private boolean isUnLocked;
 	private String name;
 	private boolean isGradable;
+	private String completeRule;
+	private String unlockRule;
 
 	public QuestPathItem() {
 		super();
@@ -42,6 +44,8 @@ public class QuestPathItem {
 		this.isUnLocked = false;
 		this.name = "";
 		this.isGradable = false;
+		this.unlockRule = "";
+		this.completeRule = "";
 	}
 	public Id getContentId() {
 		return contentId;
@@ -127,7 +131,18 @@ public class QuestPathItem {
 	public void setUnLocked(boolean isUnLocked) {
 		this.isUnLocked = isUnLocked;
 	}
-	
+	public String getCompleteRule() {
+		return completeRule;
+	}
+	public void setCompleteRule(String completeRule) {
+		this.completeRule = completeRule;
+	}
+	public String getUnlockRule() {
+		return unlockRule;
+	}
+	public void setUnlockRule(String unlockRule) {
+		this.unlockRule = unlockRule;
+	}
 	@Override
 	public String toString() {
 		return "QuestPathItem [contenetId=" + contentId + ", poinstPossible="
