@@ -37,10 +37,13 @@
         
 	double max = 0; 
 	double xpnextlevel = 0;
+	double barValue = 0;
+	String inventoryString = "";
+	String XPstatus = "";
+	boolean atMaxLevel = false;
 	
 	//check whether user is student or instructor
 	String sessionUserRole = ctx.getCourseMembership().getRoleAsString();
-	out.println(sessionUserRole+"<br>");
 	boolean isUserAnInstructor = false;
 	if (sessionUserRole.trim().toLowerCase().equals("instructor")) {
 		isUserAnInstructor = true;
@@ -118,44 +121,33 @@
 		//set paramters of progresss bar based on student's player level
 		if( currStudent.playerLevel.trim().toLowerCase().equalsIgnoreCase("1")) {
 			max = 100; 
-			xpnextlevel = max - currStudent.score; 
+			xpnextlevel = max - currStudent.score;
+			barValue = (currStudent.score-0)/(max-0);
 		}
 		else if( currStudent.playerLevel.trim().toLowerCase().equalsIgnoreCase("2")){ 
 			max = 300; 
 			xpnextlevel = max - currStudent.score;
+			barValue = (currStudent.score-100)/(max-100);
 		}
 		else if ( currStudent.playerLevel.trim().toLowerCase().equalsIgnoreCase("3")){ 
 			max = 600;
 			xpnextlevel = max - currStudent.score;
+			barValue = (currStudent.score-300)/(max-300);
 		}
 		else if ( currStudent.playerLevel.trim().toLowerCase().equalsIgnoreCase("4")){ 
 			max =1000; 
 			xpnextlevel = max - currStudent.score;
+			barValue = (currStudent.score-600)/(max-600);
 		}
 		else if ( currStudent.playerLevel.trim().toLowerCase().equalsIgnoreCase("5")){
 			max = currStudent.score;
 			xpnextlevel = 0;
+			barValue = 100;
+			atMaxLevel = true;
 		}
-		
-		//print information about the student
-		out.println(currStudent.firstName);
-		out.println(currStudent.lastName + "<br>");
-		out.println(currStudent.inventory + "<br>");
-		out.println("Gold:");
-		out.println(currStudent.gold  + "<br>");
-		out.println("Player Level:");
-		out.println(currStudent.playerLevel + "<br>");
-		out.println("Your Score:");
-		out.println(currStudent.score);
-		out.println("/");
-		out.println(max);
-		out.println("<br>");
-		out.println("XP To next level:");
-		out.println(xpnextlevel);
-		out.println("<br>");
-		out.println(currStudent.isFemale + "<br>");
-		out.println("Inventory:<br>");
         
+		XPstatus = currStudent.score + "/" + max;
+		
         //decode inventory
 		Scanner input = new Scanner(currStudent.inventory).useDelimiter("/");
 		String item = "";
@@ -169,24 +161,19 @@
 			String itemID = input2.next();
 			if(quantity > 0) {
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("A")) {
-					out.print(quantity);
-					out.print(" X Scroll of Lockpicking<br>");
+					inventoryString += quantity + " x Scroll of Lockpicking<br>";
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("B")) {
-					out.print(quantity);
-					out.print(" X Elixir of Time Control<br>");
+					inventoryString += quantity + " x Elixir of Time Control<br>";
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("C")) {
-					out.print(quantity);
-					out.print(" X A Hat<br>");
+					inventoryString += quantity + " x A Hat<br>";
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("D")) {
-					out.print(quantity);
-					out.print(" X Another Hat<br>");
+					inventoryString += quantity + " x Another Hat<br>";
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("E")) {
-					out.print(quantity);
-					out.print(" X HATS! HATS! HATS! HATS!<br>");
+					inventoryString += quantity + " x HATS! HATS! HATS! HATS!<br>";
 				}
 			}
 		}
@@ -195,6 +182,7 @@
 	
 	//get path of images folder
 	String imagePath = PlugInUtil.getUri("dt", "gamercardblock", "images/");
+	String docPath = PlugInUtil.getUri("dt", "gamercardblock", "Documents/");
 %>
 <!DOCTYPE html>
 <html>
@@ -206,33 +194,81 @@
 			var isInstructor = <%=isUserAnInstructor%>;
 			if (!isInstructor) {
 				var currStudentscore = <%=currStudent.score%>;
-				var max =<%=max%>;
+				var barValue = <%=barValue%>
+				var max = <%=max%>;
 				var thegender = <%=currStudent.isFemale%>;
+				var atMaxLevel = <%=atMaxLevel%>
+				var xpString = $('<div style="margin-top: 5px"><center><strong><%=XPstatus%></strong></center></div>');
+				var maxXPString = $('<div id = "style="margin-top: 5px"><center>MAXIMUM LEVEL</center></div>');
+				var divInventory = $('<div class = "inventory_scroll"><%=inventoryString%></div>');
 				$(document).ready(
 					function() {
-							$("#progressbar").progressbar({max: max, value: currStudentscore, showtext:true,percentage:true});
+							$("#progressbar").progressbar({max: 1, value: barValue, showtext:true,percentage:true});
+                            $("#progressbar").css({ 'background': 'White' });
+                            $("#progressbar > div").css({ 'background': '#339967' });
+                            if (atMaxLevel) {
+                            	$("#progressbar > div").append(maxXPString);
+								$("#information_left").append('<strong><center>Current XP: <%=currStudent.score%></center></strong>');
+                            }
+                            else {
+                            	if (barValue > 0){
+                            		$("#progressbar > div").append(xpString);
+                            	}
+                            	else {
+                            		$("#progressbar").append(xpString);
+                            	}
+                            	$("#information_left").append('<strong><center>Only <%=xpnextlevel%> XP to the next level!</center></strong>');
+                            }
+							$("#information_left").append('<br><strong>Inventory:</strong>');
+							$("#inventory").append(divInventory);
 							if (thegender == true){
-								$("#avatar").append('<img src="<%=imagePath%>female.png">');
+								$("#avatar").append('<img src="<%=imagePath%>female.png" width="120px" height="120px"><br>');
 							}
-							else if (thegender == false) {
-								$("#avatar").append('<img src="<%=imagePath%>male.png">');
+							else {
+								$("#avatar").append('<img src="<%=imagePath%>male.png" width="120px" height="120px"><br>');
 							}
+							$("#avatar").append('<strong><center><%=currStudent.firstName%> '+'<%=currStudent.lastName%></center></strong>');
+							$("#avatar").append('<center>Level <%=currStudent.playerLevel%></center>');
+							$("#avatar").append('<center><%=currStudent.gold%> Gold</center>');
+							
 					}
 				);
 			}
 			else {
 				$(document).ready(
 					function() {
-						$("#instructor").append("Place Instructions Here");
+						$("#instructor").append("<h1>Welcome to the Gamercard Module!</h1>");
+						$("#instructor").append("<body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><p>Your students are now able to view their progress in your course with this module. To take full advantage of this module, please ensure that you have completed the following steps:</p> </body></html>");
+						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><p>(1) Create a total column</p><p>Go to Grade Center -> Full Grade Center ->Create Calculated Column -> Create Total Column</p><p>For Column Name enter total</p><p>For Primary Display select Score</p><p>For Include this Column in Grade Center Calculations select Yes</p><p>Click Submit</p></body></html>");
+						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><p>(2) Create a gold column</p><p>Go to Grade Center -> Full Grade Center ->Create Column</p><p>For Column Name enter gold</p><p>For Primary Display select Score</p><p>For Point Possible type 0</p><p>Leave Dates Sections Blank</p><p>For Include this Column in Grade Center Calculations select No</p><p>Click Submit</p></body></html>");
+						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><p>(3) Create an inventory column</p><p>Go to Grade Center -> Full Grade Center ->Create Column</p><p>For Column Name enter inventory</p><p>For Primary Display select Text</p><p>For Point Possible type 0</p><p>Leave Dates Sections Blank</p><p>For Include this Column in Grade Center Calculations select No</p><p>Click Submit</p></body></html>");
+						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><p>You are now done! To include any assignments in calculation of XP, be sure that you have selected Yes for Include this Column in Grade Center Calculations for that assignment.</p></body></html>");
+						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
+						$("#instructor").append("<html> <body><body><a href=<%=docPath%>Gamercard_Module_Instructor_Manual.pdf>For More Information</a></body></body></html>");
 					}
 				);
 			}
 		</script>
 	</head>
+	<style>
+		div.inventory_scroll {
+			height:70px;
+			overflow:auto;
+		}
+	</style>
 	<body>
+		<div id="avatar" style="float: right; margin-left: 30px"></div>
 		<div id="progressbar"></div>
-		<div id="avatar"></div>
+		<div id="information_left"></div>
+		<div id="inventory"></div>
 		<div id="instructor"></div>
+		<div id="docs"></div>
 	</body>
 </html>
 
