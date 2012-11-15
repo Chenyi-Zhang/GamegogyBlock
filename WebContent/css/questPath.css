@@ -1,13 +1,17 @@
+div.qp {
+	max-width: 900px;
+	margin: auto;
+}
 h3.qpHdr1
 {
 text-align: center;
-color:maroon;
+color: black;
 font-size:large;
 padding-bottom: 8px;
 }
 h3.qpHdr2
 {
-color:maroon;
+color:black;
 font-size:large;
 padding-top: 12px;
 }
@@ -26,9 +30,12 @@ th.qp
 {
 font-weight: bold;
 font-size: medium;
+background-color: black;
+color: white;
 }
 td.qp
 {
+background-color: white;
 font-size: medium;
 }
 .imgC 

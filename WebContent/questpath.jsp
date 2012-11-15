@@ -104,8 +104,8 @@
 			jQueryAlias = $.noConflict();  //to avoid this webapp conflicting with others on the page
 </script>
 </head>
-<body>
-	<div id="questpathBlockContainer">
+<body class="qp">
+	<div id="questpathBlockContainer" class="qp">
 		<%
 		//Load Course Table of Content
  			CourseTocDbLoader cTocLoader = CourseTocDbLoader.Default.getInstance();
