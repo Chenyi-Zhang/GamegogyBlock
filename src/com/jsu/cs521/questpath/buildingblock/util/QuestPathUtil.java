@@ -98,15 +98,17 @@ public class QuestPathUtil {
 			}
 			if (item.getParentContent().size() > 0) {
 				boolean subsequentRule = false;
+				if (item.getUnlockRule().length() > 0) {subsequentRule = true;}
 				StringBuilder sb = new StringBuilder();
 				for (String pc : item.getParentContent()) {
 					if (!subsequentRule) {
 						sb.append(" Item will be unlocked when the following Quest Path Items are completed: " + pc);
+						subsequentRule = true;
 					} else {
 						sb.append("," + pc);
 					}
 				}
-				sb.append(".");
+				//sb.append(".");
 				item.setUnlockRule(sb.toString());
 			}
 		}

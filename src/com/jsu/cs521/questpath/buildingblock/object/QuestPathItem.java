@@ -1,5 +1,6 @@
 package com.jsu.cs521.questpath.buildingblock.object;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import blackboard.persist.Id;
  *
  */
 public class QuestPathItem {
-	
+	private DecimalFormat nf = new DecimalFormat("#0.00");
 	private Id contentId;
 	private float pointsPossible;
 	private float pointsEarned;
@@ -143,6 +144,11 @@ public class QuestPathItem {
 	public void setUnlockRule(String unlockRule) {
 		this.unlockRule = unlockRule;
 	}
+	
+	public String getPercentFormatted() {
+		return nf.format(this.getPercentageEarned());
+	}
+	
 	@Override
 	public String toString() {
 		return "QuestPathItem [contenetId=" + contentId + ", poinstPossible="
