@@ -32,15 +32,19 @@
 		}
 	} //end of class Student
 	
-	//instantiate a student object
-	Student currStudent = new Student(null, null, null, null, null, null, null);
-        
+	//instantiate a student object with default values
+	Student currStudent = new Student("", "", 0., "", "1", "0", false);
+    
+	//initialize parameters needed for calculations, etc.
 	double max = 0; 
 	double xpnextlevel = 0;
 	double barValue = 0;
 	String inventoryString = "";
 	String XPstatus = "";
 	boolean atMaxLevel = false;
+	boolean foundInventory = false;
+	boolean foundTotal = false;
+	boolean foundGold = false;
 	
 	//check whether user is student or instructor
 	String sessionUserRole = ctx.getCourseMembership().getRoleAsString();
@@ -80,6 +84,7 @@
 		List <CourseMembership> cmlist = CourseMembershipDbLoader.Default.getInstance().loadByCourseIdAndRole(courseID, CourseMembership.Role.STUDENT, null, true);
 		Iterator<CourseMembership> i = cmlist.iterator();
         
+		//go through gradebook to set values for student
 		while (i.hasNext()) {   
 			CourseMembership cm = (CourseMembership) i.next();
 			String currentUserID = cm.getUserId().toString();
@@ -89,7 +94,7 @@
 					GradeWithAttemptScore gwas2 = bookData.get(cm.getId(), gi.getId());
 					Double currScore = 0.0;
 					String currInventory = "";
-					String currGold = "";
+					String currGold = "0";
 					
                         if(gwas2 != null && !gwas2.isNullGrade()) {
                                 currInventory = gwas2.getTextValue();
@@ -100,12 +105,15 @@
                         if (sessionUserID.equals(currentUserID)) {
 	                        if (gi.getTitle().trim().toLowerCase().equalsIgnoreCase("inventory")) {
 	                                        currStudent.inventory = currInventory;
+	                                        foundInventory = true;
 	                        }
 	                        if (gi.getTitle().trim().toLowerCase().equalsIgnoreCase("gold")) {
 	                                        currStudent.gold = currGold;
+	                                        foundGold = true;
 	                        }
 	                        if (gi.getTitle().trim().toLowerCase().equalsIgnoreCase("total")) {
 	                                        currStudent.score = currScore;
+	                                        foundTotal = true;
 	                        }
                         }  
                 }
@@ -146,11 +154,13 @@
 			atMaxLevel = true;
 		}
         
+		//create XP text for progress bar
 		XPstatus = currStudent.score + "/" + max;
 		
         //decode inventory
 		Scanner input = new Scanner(currStudent.inventory).useDelimiter("/");
 		String item = "";
+		Boolean foundItem = false;
 		while (input.hasNext()) {
 			item = input.next();
 			Scanner input2 = new Scanner(item).useDelimiter("\\.");
@@ -159,28 +169,37 @@
 				quantity = input2.nextInt();
 			}
 			String itemID = input2.next();
+
 			if(quantity > 0) {
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("A")) {
 					inventoryString += quantity + " x Scroll of Lockpicking<br>";
+					foundItem = true;
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("B")) {
 					inventoryString += quantity + " x Elixir of Time Control<br>";
+					foundItem = true;
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("C")) {
 					inventoryString += quantity + " x A Hat<br>";
+					foundItem = true;
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("D")) {
 					inventoryString += quantity + " x Another Hat<br>";
+					foundItem = true;
 				}
 				if(itemID.trim().toLowerCase().equalsIgnoreCase("E")) {
 					inventoryString += quantity + " x HATS! HATS! HATS! HATS!<br>";
+					foundItem = true;
 				}
 			}
+		}
+		if (!foundItem) {
+			inventoryString += "You have no items in your inventory.<br>";
 		}
 		
 	} //end retrieval of student information
 	
-	//get path of images folder
+	//get path of images and doumentation folders
 	String imagePath = PlugInUtil.getUri("dt", "gamercardblock", "images/");
 	String docPath = PlugInUtil.getUri("dt", "gamercardblock", "Documents/");
 %>
@@ -192,7 +211,9 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 		<script>
 			var isInstructor = <%=isUserAnInstructor%>;
+			//check if user is instructor to determine output
 			if (!isInstructor) {
+				//initialize information required for module objects
 				var currStudentscore = <%=currStudent.score%>;
 				var barValue = <%=barValue%>
 				var max = <%=max%>;
@@ -203,6 +224,7 @@
 				var divInventory = $('<div class = "inventory_scroll"><%=inventoryString%></div>');
 				$(document).ready(
 					function() {
+							//output progress bar
 							$("#progressbar").progressbar({max: 1, value: barValue, showtext:true,percentage:true});
                             $("#progressbar").css({ 'background': 'White' });
                             $("#progressbar > div").css({ 'background': '#339967' });
@@ -219,14 +241,20 @@
                             	}
                             	$("#information_left").append('<strong><center>Only <%=xpnextlevel%> XP to the next level!</center></strong>');
                             }
+                            
+                            //output inventory
 							$("#information_left").append('<br><strong>Inventory:</strong>');
 							$("#inventory").append(divInventory);
+							
+							//output avatarbased on student's gender
 							if (thegender == true){
 								$("#avatar").append('<img src="<%=imagePath%>female.png" width="120px" height="120px"><br>');
 							}
 							else {
 								$("#avatar").append('<img src="<%=imagePath%>male.png" width="120px" height="120px"><br>');
 							}
+							
+							//output other student informatio including name, gold, player level
 							$("#avatar").append('<strong><center><%=currStudent.firstName%> '+'<%=currStudent.lastName%></center></strong>');
 							$("#avatar").append('<center>Level <%=currStudent.playerLevel%></center>');
 							$("#avatar").append('<center><%=currStudent.gold%> Gold</center>');
@@ -237,20 +265,14 @@
 			else {
 				$(document).ready(
 					function() {
+						//output intructions to set up module
 						$("#instructor").append("<h1>Welcome to the Gamercard Module!</h1>");
-						$("#instructor").append("<body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><p>Your students are now able to view their progress in your course with this module. To take full advantage of this module, please ensure that you have completed the following steps:</p> </body></html>");
-						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><p>(1) Create a total column</p><p>Go to Grade Center -> Full Grade Center ->Create Calculated Column -> Create Total Column</p><p>For Column Name enter total</p><p>For Primary Display select Score</p><p>For Include this Column in Grade Center Calculations select Yes</p><p>Click Submit</p></body></html>");
-						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><p>(2) Create a gold column</p><p>Go to Grade Center -> Full Grade Center ->Create Column</p><p>For Column Name enter gold</p><p>For Primary Display select Score</p><p>For Point Possible type 0</p><p>Leave Dates Sections Blank</p><p>For Include this Column in Grade Center Calculations select No</p><p>Click Submit</p></body></html>");
-						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><p>(3) Create an inventory column</p><p>Go to Grade Center -> Full Grade Center ->Create Column</p><p>For Column Name enter inventory</p><p>For Primary Display select Text</p><p>For Point Possible type 0</p><p>Leave Dates Sections Blank</p><p>For Include this Column in Grade Center Calculations select No</p><p>Click Submit</p></body></html>");
-						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><p>You are now done! To include any assignments in calculation of XP, be sure that you have selected Yes for Include this Column in Grade Center Calculations for that assignment.</p></body></html>");
-						$("#instructor").append("<html> <body><h1>    </h1></body></html>");
-						$("#instructor").append("<html> <body><body><a href=<%=docPath%>Gamercard_Module_Instructor_Manual.pdf>For More Information</a></body></body></html>");
+						$("#instructor").append("<p>Your students are now able to view their progress in your course with this module. To take full advantage of this module, please ensure that you have completed the following steps:</p>");
+						$("#instructor").append("<h2>(1) Create a total column</h2><p><i>By default, a total column is included in the grade center of your course. To check if this column is included in your course:<br><br></i></p><p>Go to Grade Center -> Full Grade Center<br><br></p><p><i>If total is not included in your grade center, complete the following steps. Otherwise, skip to step (2).<br><br></i></p><p> Click Create Calculated Column -> Create Total Column</p><p>For Column Name enter total</p><p>For Primary Display select Score</p><p>For Include this Column in Grade Center Calculations select Yes</p><p>Click Submit</p>");
+						$("#instructor").append("<h2>(2) Create a gold column</h2><p>Go to Grade Center -> Full Grade Center ->Create Column</p><p>For Column Name enter gold</p><p>For Primary Display select Score</p><p>For Point Possible type 0</p><p>Leave Dates Sections Blank</p><p>For Include this Column in Grade Center Calculations select No</p><p>Click Submit</p>");
+						$("#instructor").append("<h2>(3) Create an inventory column</h2><p>Go to Grade Center -> Full Grade Center ->Create Column</p><p>For Column Name enter inventory</p><p>For Primary Display select Text</p><p>For Point Possible type 0</p><p>Leave Dates Sections Blank</p><p>For Include this Column in Grade Center Calculations select No</p><p>Click Submit</p>");
+						$("#instructor").append("<p>You are now done! To include any assignments in calculation of XP, be sure that you have selected Yes for Include this Column in Grade Center Calculations for that assignment.</p>");
+						$("#instructor").append("<br><p><a href=<%=docPath%>Gamercard_Module_Instructor_Manual.pdf>For More Information</a></p>");
 					}
 				);
 			}
